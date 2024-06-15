@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  
+  <title>Frontend Mentor | Contact form</title>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+  }
+  .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
+  .form-group {
+      margin-bottom: 15px;
+  }
+  .form-group label {
+      display: block;
+      margin-bottom: 5px;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+  }
+  .form-group input[type="checkbox"] {
+      width: auto;
+  }
+  .error {
+      color: red;
+  }
+  .success {
+      color: green;
+  }
+  .btn-submit {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+  }
+  .btn-submit:hover {
+      background-color: #45a049;
+  }
+  .btn-group {
+      display: flex;
+      gap: 10px;
+  }
+  .btn-option {
+      background-color: #ddd;
+      border: 1px solid #ccc;
+      padding: 10px;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+  }
+  .btn-option.selected {
+      background-color: #4CAF50;
+      color: white;
+  }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Contáctenos</h2>
+    <form id="contactForm">
+        <div class="form-group">
+            <label for="nombre">Nombre de pila</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <span class="error" id="nombreError"></span>
+        </div>
+        <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" required>
+            <span class="error" id="apellidoError"></span>
+        </div>
+        <div class="form-group">
+            <label for="email">Dirección de correo electrónico</label>
+            <input type="email" id="email" name="email" required>
+            <span class="error" id="emailError"></span>
+        </div>
+        <div class="form-group">
+            <label>Tipo de consulta</label>
+            <div class="btn-group" id="consulta">
+                <div class="btn-option" data-value="general">Investigación general</div>
+                <div class="btn-option" data-value="soporte">Solicitud de soporte</div>
+            </div>
+            <span class="error" id="consultaError"></span>
+        </div>
+        <div class="form-group">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+            <span class="error" id="mensajeError"></span>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" id="consentimiento" name="consentimiento" required>
+            <label for="consentimiento">Doy mi consentimiento para ser contactado por el equipo.</label>
+            <span class="error" id="consentimientoError"></span>
+        </div>
+        <button type="submit" class="btn-submit">Entregar</button>
+        <div class="success" id="formSuccess"></div>
+    </form>
+  </div>
+
+    <script>
+        document.querySelectorAll('.btn-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.btn-option').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('consultaError').textContent = '';
+            });
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var isValid = true;
+            var nombre = document.getElementById('nombre').value.trim();
+            var apellido = document.getElementById('apellido').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var consulta = document.querySelector('.btn-option.selected');
+            var mensaje = document.getElementById('mensaje').value.trim();
+            var consentimiento = document.getElementById('consentimiento').checked;
+
+            // Reset errors
+            document.getElementById('nombreError').textContent = '';
+            document.getElementById('apellidoError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('consultaError').textContent = '';
+            document.getElementById('mensajeError').textContent = '';
+            document.getElementById('consentimientoError').textContent = '';
+            document.getElementById('formSuccess').textContent = '';
+
+            if (!nombre) {
+                document.getElementById('nombreError').textContent = 'Este campo es obligatorio';
+                isValid = false;
+            }
+
+            if (!apellido) {
+                document.getElementById('apellidoError').textContent = 'Este campo es obligatorio';
+                isValid = false;
+            }
+
+            if (!email) {
+                document.getElementById('emailError').textContent = 'Este campo es obligatorio';
+                isValid = false;
+            } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Por favor, introduce una dirección de correo electrónico válida';
+                isValid = false;
+            }
+
+            if (!consulta) {
+                document.getElementById('consultaError').textContent = 'Por favor seleccione un tipo de consulta';
+                isValid = false;
+            }
+
+            if (!mensaje) {
+                document.getElementById('mensajeError').textContent = 'Este campo es obligatorio';
+                isValid = false;
+            }
+
+            if (!consentimiento) {
+                document.getElementById('consentimientoError').textContent = 'Para enviar este formulario, por favor acepta ser contactado.';
+                isValid = false;
+            }
+
+            if (isValid) {
+                document.getElementById('formSuccess').textContent = '¡Mensaje enviado! Gracias por completar el formulario. ¡Estaremos en contacto pronto!';
+                // Here you can add code to send the form data to the server
+                document.getElementById('contactForm').reset();
+                document.querySelectorAll('.btn-option').forEach(btn => btn.classList.remove('selected'));
+            }
+        });
+    </script>
+
+
+
+  <div class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>. 
+    Coded by <a href="#">minombreapellido1</a>.
+  </div>
+</body>
+</html>
